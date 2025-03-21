@@ -121,7 +121,6 @@ export default function Block({
       blockSpecs: {
         // enable the default blocks if desired
         ...defaultBlockSpecs,
-        //file: undefined,
         customFile: File
       },
     });
@@ -146,7 +145,7 @@ export default function Block({
     }
   }, [editor, defaultValue]);
 
-  const onChange = async () => { console.log("EDITOR", editor);
+  const onChange = async () => {
     // Converts the editor's contents from Block objects to HTML and store to state.
     const html = await editor.blocksToHTMLLossy(editor.document);
     setState({
