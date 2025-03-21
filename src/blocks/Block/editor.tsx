@@ -2,6 +2,7 @@ import {
   BlockNoteSchema,
   defaultInlineContentSpecs,
   filterSuggestionItems,
+  defaultBlockSpecs
 } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
@@ -13,6 +14,7 @@ import {
 import { useGetKey, useGetSet } from "@brevity-builder/react";
 import { useEffect, useMemo } from "react";
 import { useMention } from "./mention";
+import { CustomFile } from "./customfile";
 
 async function uploadFile(file: File) {
   const headers = {};
@@ -101,6 +103,7 @@ export default function Block({
   onTextChange: (value: any) => void;
 }) {
   const Mention = useMention(users);
+  const File = CustomFile();
   const key = useGetKey(props);
   const initialValue = useMemo(
     () => ({ value: defaultValue as string }),
@@ -113,7 +116,13 @@ export default function Block({
         // Adds all default inline content.
         ...defaultInlineContentSpecs,
         // Adds the mention tag.
-        mention: Mention,
+        mention: Mention
+      },
+      blockSpecs: {
+        // enable the default blocks if desired
+        ...defaultBlockSpecs,
+        //file: undefined,
+        customFile: File
       },
     });
   }, []);
@@ -137,13 +146,13 @@ export default function Block({
     }
   }, [editor, defaultValue]);
 
-  const onChange = async () => {
+  const onChange = async () => { console.log("EDITOR", editor);
     // Converts the editor's contents from Block objects to HTML and store to state.
     const html = await editor.blocksToHTMLLossy(editor.document);
     setState({
       value: html.replaceAll("<p></p>", "<p>&nbsp;</p>"),
     });
-    console.log(html);
+    console.log("SAVED TO DB", html);
     if (onTextChange) {
       onTextChange(html);
     }
